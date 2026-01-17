@@ -31,11 +31,26 @@ class Catch(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="catches"
     )
+    LENGTH_UNIT_CHOICES = [
+        ("cm", "Centimeters"),
+        ("in", "Inches"),
+    ]
+    WEIGHT_UNIT_CHOICES = [
+        ("kg", "Kilograms"),
+        ("lbs", "Pounds"),
+    ]
+
     length = models.DecimalField(
-        max_digits=6, decimal_places=2, help_text="Length in cm or inches"
+        max_digits=6, decimal_places=2, help_text="Length value"
+    )
+    length_unit = models.CharField(
+        max_length=2, choices=LENGTH_UNIT_CHOICES, default="cm"
     )
     weight = models.DecimalField(
-        max_digits=6, decimal_places=2, help_text="Weight in kg or lbs"
+        max_digits=6, decimal_places=2, help_text="Weight value"
+    )
+    weight_unit = models.CharField(
+        max_length=3, choices=WEIGHT_UNIT_CHOICES, default="kg"
     )
     catch_location = models.CharField(max_length=255)
     catch_datetime = models.DateTimeField()
