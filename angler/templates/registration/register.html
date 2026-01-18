@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+    <h2 class="text-2xl font-bold mb-4">Register</h2>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            <label for="id_username" class="block font-medium">Username</label>
+            <input type="text" name="username" id="id_username" class="input input-bordered w-full" value="{{ form.username.value|default_if_none:'' }}">
+            {{ form.username.errors }}
+        </div>
+        <div>
+            <label for="id_email" class="block font-medium">Email</label>
+            <input type="email" name="email" id="id_email" class="input input-bordered w-full" value="{{ form.email.value|default_if_none:'' }}">
+            {{ form.email.errors }}
+        </div>
+        <div>
+            <label for="id_full_name" class="block font-medium">Full Name</label>
+            <input type="text" name="full_name" id="id_full_name" class="input input-bordered w-full" value="{{ form.full_name.value|default_if_none:'' }}">
+            {{ form.full_name.errors }}
+        </div>
+        <div>
+            <label for="id_password" class="block font-medium">Password</label>
+            <input type="password" name="password" id="id_password" class="input input-bordered w-full">
+            {{ form.password.errors }}
+        </div>
+        <div>
+            <label for="id_password2" class="block font-medium">Repeat Password</label>
+            <input type="password" name="password2" id="id_password2" class="input input-bordered w-full">
+            {{ form.password2.errors }}
+        </div>
+        <button type="submit" class="btn btn-primary w-full">Register</button>
+    </form>
+    <p class="mt-4 text-center">Already have an account? <a href="{% url 'login' %}" class="text-blue-600">Login</a></p>
+</div>
+{% endblock %}

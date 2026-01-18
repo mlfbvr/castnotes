@@ -15,11 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+# Main URL configuration for the CastNotes project
 from django.contrib import admin
 from django.urls import path, include
+from accounts import views as accounts_views
 
+
+# Route admin, registration, main app, and authentication URLs
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("angler.urls")),
-    path("", include("django.contrib.auth.urls")),
+    path("admin/", admin.site.urls),  # Django admin interface
+    path(
+        "accounts/register/", accounts_views.register, name="register"
+    ),  # User registration
+    path("", include("angler.urls")),  # Main angler app URLs
+    path("", include("django.contrib.auth.urls")),  # Built-in authentication URLs
 ]
