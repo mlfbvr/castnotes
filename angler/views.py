@@ -7,3 +7,9 @@ def home(request):
 	if request.user.is_authenticated:
 		return render(request, "angler/home.html")
 	return render(request, "angler/welcome.html")
+
+
+@login_required
+def profile(request):
+	"""Display the authenticated user's profile page."""
+	return render(request, "angler/profile.html", {"user": request.user})
