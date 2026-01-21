@@ -2,10 +2,14 @@
 {% block content %}
 <div class="flex flex-col items-center justify-center min-h-screen">
   <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+    {% load static %}
+    <img src="{% static 'images/castnotes_clear.png' %}" alt="CastNotes Logo" class="mx-auto mb-6 w-auto h-auto">
     <h2 class="text-2xl font-bold mb-6 text-center">Login to CastNotes</h2>
     <form method="post" action="">
       {% csrf_token %}
-      {{ form.as_p }}
+      <table>
+        {{ form.as_table }}
+      </table>
       <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
     </form>
     <p class="mt-4 text-center">

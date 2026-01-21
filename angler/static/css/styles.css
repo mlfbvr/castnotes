@@ -1,0 +1,5 @@
+form table th,
+form table td {
+  padding: 0.5rem;
+  text-align: left;
+}

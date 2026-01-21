@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CastNotes</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% load static %}
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
   </head>
   <body class="bg-gray-100 min-h-screen">
     <nav class="bg-white shadow mb-8">
-      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-        <a href="/" class="text-xl font-bold text-blue-700">CastNotes</a>
-        <div>
+      <div class="container mx-auto px-4 py-4 flex justify-between items-center align-middle">
+        <a href="/" class="text-xl font-bold text-blue-700">
+          <img src="{% static 'images/castnotes_clear_small.png' %}" alt="CastNotes Logo" class="h-10 inline-block">
+        </a>
+        <div class="flex items-center">
           {% if user.is_authenticated %}
             <span class="mr-4">Hello, {{ user.username }}!</span>
             <form id="logout-form" method="post" action="{% url 'logout' %}">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Logout</button>
+              <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Logout</button>
             </form>
           {% else %}
             <a href="/login/" class="text-blue-600 hover:underline mr-4">Login</a>

@@ -16,10 +16,11 @@ Including another URLconf
 """
 
 # Main URL configuration for the CastNotes project
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from accounts import views as accounts_views
-
+from django.conf.urls.static import static
 
 # Route admin, registration, main app, and authentication URLs
 urlpatterns = [
@@ -30,3 +31,4 @@ urlpatterns = [
     path("", include("angler.urls")),  # Main angler app URLs
     path("", include("django.contrib.auth.urls")),  # Built-in authentication URLs
 ]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
