@@ -54,6 +54,9 @@ class Catch(models.Model):
     )
     catch_location = models.CharField(max_length=255)
     catch_datetime = models.DateTimeField()
+    photo = models.ImageField(
+        upload_to="catch_photos/", blank=True, null=True, help_text="Photo of the catch"
+    )
     weather_conditions = models.TextField(blank=True)
     notes = models.TextField(blank=True)
     is_public = models.BooleanField(default=True)

@@ -13,3 +13,20 @@ def home(request):
 def profile(request):
 	"""Display the authenticated user's profile page."""
 	return render(request, "angler/profile.html", {"user": request.user})
+
+
+@login_required
+def log_catch(request):
+	"""Display the form to log a new catch."""
+	from .forms import CatchForm
+
+	if request.method == "POST":
+		form = CatchForm(request.POST, request.FILES)
+		if form.is_valid():
+			catch = form.save(commit=False)
+			catch.user = request.user
+			catch.save()
+			return redirect("profile")
+	else:
+		form = CatchForm()
+	return render(request, "angler/log_catch.html", {"form": form})

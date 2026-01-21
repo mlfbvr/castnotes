@@ -1,0 +1,157 @@
+"""Forms for the angler app."""
+
+from django import forms
+from .models import Catch, Fish
+
+
+class CatchForm(forms.ModelForm):
+    """Form for logging a new catch with all details."""
+
+    fish = forms.ModelChoiceField(
+        queryset=Fish.objects.all(),
+        label="Fish Species",
+        empty_label="Select a fish species",
+        widget=forms.Select(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            }
+        ),
+    )
+
+    length = forms.DecimalField(
+        label="Length",
+        max_digits=6,
+        decimal_places=2,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            }
+        ),
+    )
+
+    length_unit = forms.ChoiceField(
+        label="Length Unit",
+        choices=Catch.LENGTH_UNIT_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            }
+        ),
+    )
+
+    weight = forms.DecimalField(
+        label="Weight",
+        max_digits=6,
+        decimal_places=2,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            }
+        ),
+    )
+
+    weight_unit = forms.ChoiceField(
+        label="Weight Unit",
+        choices=Catch.WEIGHT_UNIT_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            }
+        ),
+    )
+
+    catch_location = forms.CharField(
+        label="Location",
+        max_length=255,
+        widget=forms.TextInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "placeholder": "Where did you catch this fish?",
+            }
+        ),
+    )
+
+    catch_datetime = forms.DateTimeField(
+        label="Date & Time",
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "type": "datetime-local",
+            }
+        ),
+    )
+
+    photo = forms.ImageField(
+        label="Photo",
+        required=False,
+        widget=forms.FileInput(
+            attrs={
+                "class": "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            }
+        ),
+    )
+
+    weather_conditions = forms.CharField(
+        label="Weather Conditions",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "rows": 3,
+                "placeholder": "e.g., Sunny, 72°F, light breeze",
+            }
+        ),
+    )
+
+    notes = forms.CharField(
+        label="Notes",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "rows": 4,
+                "placeholder": "Any additional notes about your catch...",
+            }
+        ),
+    )
+
+    released = forms.BooleanField(
+        label="Released",
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            }
+        ),
+        help_text="Check if released, uncheck if kept",
+    )
+
+    is_public = forms.BooleanField(
+        label="Make Public",
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            }
+        ),
+        help_text="Share this catch with other anglers",
+    )
+
+    class Meta:
+        model = Catch
+        fields = [
+            "fish",
+            "length",
+            "length_unit",
+            "weight",
+            "weight_unit",
+            "catch_location",
+            "catch_datetime",
+            "photo",
+            "weather_conditions",
+            "notes",
+            "released",
+            "is_public",
+        ]
