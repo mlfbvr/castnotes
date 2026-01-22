@@ -28,12 +28,30 @@ def profile(request):
 def log_catch(request):
     """Display the form to log a new catch."""
     from .forms import CatchForm
+    from .models import Fish
 
     if request.method == "POST":
         form = CatchForm(request.POST, request.FILES)
         if form.is_valid():
+            new_fish_species = form.cleaned_data.get("new_fish_species")
+
+            # Create a new fish species if provided
+            if new_fish_species:
+                fish, _ = Fish.objects.get_or_create(
+                    official_name=new_fish_species,
+                    defaults={
+                        "identifying_characteristics": "User-created entry",
+                        "preferred_baits_lures": "Not specified",
+                        "best_fishing_method": "Not specified",
+                        "preferred_environments": "Not specified",
+                    },
+                )
+            else:
+                fish = form.cleaned_data.get("fish")
+
             catch = form.save(commit=False)
             catch.user = request.user
+            catch.fish = fish
             catch.save()
             return redirect("profile")
     else:

@@ -10,10 +10,25 @@ class CatchForm(forms.ModelForm):
     fish = forms.ModelChoiceField(
         queryset=Fish.objects.all(),
         label="Fish Species",
-        empty_label="Select a fish species",
+        empty_label="Select a fish species or create new",
         widget=forms.Select(
             attrs={
-                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "id": "id_fish_select",
+            }
+        ),
+        required=False,
+    )
+
+    new_fish_species = forms.CharField(
+        label="Add New Fish Species",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "placeholder": "Enter fish species name (if not in list)",
+                "id": "id_new_fish_species",
             }
         ),
     )
@@ -155,3 +170,21 @@ class CatchForm(forms.ModelForm):
             "released",
             "is_public",
         ]
+
+    def clean(self):
+        """Validate that either an existing fish is selected or a new species name is provided."""
+        cleaned_data = super().clean()
+        fish = cleaned_data.get("fish")
+        new_fish_species = cleaned_data.get("new_fish_species")
+
+        if not fish and not new_fish_species:
+            raise forms.ValidationError(
+                "Please select an existing fish species or enter a new one."
+            )
+
+        if fish and new_fish_species:
+            raise forms.ValidationError(
+                "Please either select an existing fish species or enter a new one, not both."
+            )
+
+        return cleaned_data

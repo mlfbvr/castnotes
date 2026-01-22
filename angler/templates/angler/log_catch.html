@@ -23,7 +23,27 @@
                     {% if form.fish.errors %}
                         <p class="mt-1 text-sm text-red-500">{{ form.fish.errors.0 }}</p>
                     {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Or add a new species below if it's not in the list.</p>
                 </div>
+
+                <!-- New Fish Species -->
+                <div>
+                    <label for="{{ form.new_fish_species.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.new_fish_species.label }}
+                    </label>
+                    {{ form.new_fish_species }}
+                    {% if form.new_fish_species.errors %}
+                        <p class="mt-1 text-sm text-red-500">{{ form.new_fish_species.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-md">
+                        <p class="text-sm text-red-700">
+                            <strong>Error:</strong> {{ form.non_field_errors.0 }}
+                        </p>
+                    </div>
+                {% endif %}
 
                 <!-- Length and Unit -->
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -149,4 +169,50 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Handle fish species selection logic
+    const fishSelect = document.getElementById('id_fish_select');
+    const newFishSpeciesInput = document.getElementById('id_new_fish_species');
+    const newFishSpeciesDiv = newFishSpeciesInput?.parentElement.parentElement || null;
+
+    function updateFishFieldsVisibility() {
+        if (fishSelect && newFishSpeciesInput && newFishSpeciesDiv) {
+            // If a fish is selected (not empty), focus on that
+            if (fishSelect.value) {
+                newFishSpeciesInput.value = '';
+                newFishSpeciesDiv.classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                newFishSpeciesDiv.classList.remove('opacity-50', 'pointer-events-none');
+            }
+        }
+    }
+
+    if (fishSelect) {
+        fishSelect.addEventListener('change', function() {
+            if (this.value) {
+                // If a fish is selected, clear the new fish input
+                newFishSpeciesInput.value = '';
+            }
+            updateFishFieldsVisibility();
+        });
+
+        // Initialize on page load
+        updateFishFieldsVisibility();
+    }
+
+    // Also prevent form submission if both fields are empty or both are filled
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!fishSelect.value && !newFishSpeciesInput.value) {
+                e.preventDefault();
+                alert('Please select an existing fish species or enter a new one.');
+            } else if (fishSelect.value && newFishSpeciesInput.value) {
+                e.preventDefault();
+                alert('Please either select an existing fish species or enter a new one, not both.');
+            }
+        });
+    }
+</script>
 {% endblock %}
