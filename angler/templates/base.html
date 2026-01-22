@@ -29,7 +29,17 @@
       </div>
     </nav>
     <main class="container mx-auto px-4">
+      {% if user.is_staff %}
+      <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+        <p class="font-bold">Staff Access</p>
+        <p>You are logged in as a staff member.</p>
+        <p><a href="/admin/" class="underline">Go to Admin Dashboard</a></p>
+      </div>
+      {% endif %}
       {% block content %}{% endblock %}
     </main>
+    <footer class="bg-white shadow mt-8 py-4 text-center text-gray-600">
+      &copy; 2024 CastNotes. All rights reserved.
+    </footer>
   </body>
 </html>
