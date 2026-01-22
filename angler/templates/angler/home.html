@@ -3,11 +3,13 @@
 <div class="flex flex-col items-center justify-center min-h-screen">
   <h1 class="text-3xl font-bold mb-4">Welcome back to CastNotes!</h1>
   <p class="mb-6">You are logged in.</p>
-  <a href="{% url 'log-catch' %}" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
-    Log a New Catch
-  </a>
-  <a href="{% url 'profile' %}" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-    View Your Profile
-  </a>
+  <div>
+    <a href="{% url 'log-catch' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
+      + Log a New Catch
+    </a>
+    <a href="{% url 'profile' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mx-4">
+      View Your Profile
+    </a>
+  </div>
 </div>
 {% endblock %}

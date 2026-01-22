@@ -5,7 +5,6 @@ from django.contrib.admin.sites import AlreadyRegistered
 # Automatically register all models in this app
 app = apps.get_app_config("angler")
 for model in app.get_models():
-    print(model)
     try:
         admin.site.register(model)
     except AlreadyRegistered:
