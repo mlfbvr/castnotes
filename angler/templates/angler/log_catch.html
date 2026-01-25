@@ -174,7 +174,7 @@
     // Handle fish species selection logic
     const fishSelect = document.getElementById('id_fish_select');
     const newFishSpeciesInput = document.getElementById('id_new_fish_species');
-    const newFishSpeciesDiv = newFishSpeciesInput?.parentElement.parentElement || null;
+    const newFishSpeciesDiv = newFishSpeciesInput?.parentElement || null;
 
     function updateFishFieldsVisibility() {
         if (fishSelect && newFishSpeciesInput && newFishSpeciesDiv) {
