@@ -63,6 +63,15 @@ class Catch(models.Model):
     released = models.BooleanField(
         default=True, help_text="Released (True) or kept (False)"
     )
+    lure = models.CharField(max_length=100, blank=True)
+    bait = models.CharField(max_length=100, blank=True)
+    session = models.ForeignKey(
+        "FishingSession",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="catches",
+    )
 
     class Meta:
         verbose_name_plural = "Catches"
@@ -70,3 +79,25 @@ class Catch(models.Model):
 
     def __str__(self):
         return f"{self.fish} caught by {self.user} on {self.catch_datetime.strftime('%Y-%m-%d')}"
+
+
+class FishingSession(models.Model):
+    """Model representing a fishing session."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="fishing_sessions",
+    )
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+    location = models.CharField(max_length=255)
+    weather_conditions = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name_plural = "Fishing Sessions"
+        verbose_name = "Fishing Session"
+
+    def __str__(self):
+        return f"Fishing session by {self.user} at {self.location} on {self.start_datetime.strftime('%Y-%m-%d')}"
