@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-4 py-5 sm:px-6">
+                <h1 class="text-3xl font-bold text-gray-900">Catch Details</h1>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+                <div class="space-y-8">
+                    <!-- Catch Information -->
+                    {% if catch %}
+                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Species</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.fish.official_name }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Caught By</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.user.full_name }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Caught On</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch_datetime }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Location</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch_location }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-red-500">Catch not found or you do not have permission to view this catch.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
