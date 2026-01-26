@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic import DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from angler.models import Catch
+from angler.models import Catch, FishingSession
 
 
 class HomeView(TemplateView):
@@ -90,3 +89,27 @@ class CatchDetailsView(LoginRequiredMixin, DetailView):
             return Catch.objects.get(user=self.request.user, pk=self.kwargs.get("pk"))
         except Catch.DoesNotExist:
             return None
+
+
+class CreateFishingSessionView(LoginRequiredMixin, View):
+    """View to display details of a specific fishing session."""
+
+    model = FishingSession
+
+    def get(self, request):
+        from .forms import FishingSessionForm
+
+        form = FishingSessionForm()
+        return render(request, "angler/fishing_session.html", {"form": form})
+
+    def post(self, request):
+        from .forms import FishingSessionForm
+        from datetime import datetime
+
+        form = FishingSessionForm(request.POST)
+        if form.is_valid():
+            session = form.save(commit=False)
+            session.user = request.user
+            session.start_datetime = datetime.now()
+            session.save()
+            return redirect("profile")

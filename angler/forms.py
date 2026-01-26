@@ -1,7 +1,8 @@
 """Forms for the angler app."""
 
 from django import forms
-from .models import Catch, Fish
+from .models import Catch, Fish, FishingSession
+from datetime import datetime
 
 
 class CatchForm(forms.ModelForm):
@@ -188,3 +189,44 @@ class CatchForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+
+class FishingSessionForm(forms.ModelForm):
+    """Form for logging a fishing session."""
+
+    start_datetime = forms.DateTimeField(
+        label="Start Date & Time",
+        initial=datetime.now,
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "type": "datetime-local",
+            }
+        ),
+    )
+    location = forms.CharField(
+        label="Location",
+        max_length=255,
+        widget=forms.TextInput(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "placeholder": "Where was your fishing session?",
+            }
+        ),
+    )
+
+    weather_conditions = forms.CharField(
+        label="Weather Conditions",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                "rows": 3,
+                "placeholder": "e.g., Cloudy, 65°F, windy",
+            }
+        ),
+    )
+
+    class Meta:
+        model = FishingSession
+        fields = ["start_datetime", "location", "weather_conditions"]
