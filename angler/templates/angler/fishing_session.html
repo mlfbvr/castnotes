@@ -8,12 +8,23 @@
                 <h1 class="text-3xl font-bold text-gray-900">Fishing Session</h1>
             </div>
             <div class="px-4 py-5 sm:p-6">
-                <a href="javascript:void(0);" onclick="navigator.geolocation.getCurrentPosition(function(position) { console.log(position.coords.latitude, position.coords.longitude); })">Get Current Location</a>
                 <form method="post">
                     {% csrf_token %}
                     <div class="space-y-6">
                         <div>
-                            {{ form.as_table }}
+                            <label for="{{ form.start_datetime.id_for_label }}" class="block text-sm font-medium text-gray-700">Start Date and Time</label>
+                            <div class="mt-1">
+                                {{ form.start_datetime}}
+                            </div>
+                        </div>
+                        <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700">Location</label>
+                        <div class="flex flex-col justify-between items-center md:flex-row md:items-center md:space-x-4">
+                            <div class="flex-grow mr-4">
+                                {{ form.location }}
+                            </div>
+                            <div>
+                                <a href="javascript:void(0);" id="link_get_location">Get Current Location</a>
+                            </div>
                         </div>
                         <div>
                             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -26,4 +37,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    function setLocation(latitude, longitude) {
+        const locationInput = document.getElementById("id_location");
+        if (locationInput) {
+            locationInput.value = `${latitude}, ${longitude}`;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const geoLink = document.getElementById("link_get_location");
+        if (geoLink) {
+            geoLink.addEventListener("click", function(event) {
+                event.preventDefault();
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    setLocation(position.coords.latitude, position.coords.longitude);
+                });
+            });
+        }
+    });
+</script>
 {% endblock %}

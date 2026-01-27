@@ -1,0 +1,13 @@
+<div class="mt-4 p-4 bg-white rounded-lg shadow flex justify-between items-start">
+    <div>
+        <h3 class="text-lg font-semibold text-gray-900">{{ catch.fish.official_name }}</h3>
+        <p><a href="{% url 'catch-details' catch.pk %}">View Details</a></p>
+        <p class="text-gray-700">Length: {{ catch.length }} {{ catch.length_unit }}</p>
+        <p class="text-gray-700">Weight: {{ catch.weight }} {{ catch.weight_unit }}</p>
+        <p class="text-gray-700">Location Caught: {{ catch.catch_location }}</p>
+        <p class="text-gray-700">Date Caught: {{ catch.catch_datetime }}</p>
+    </div>
+    {% if catch.photo %}
+        <img src="{{ catch.photo.url }}" alt="Catch Photo" class="h-32 w-32 object-cover rounded-lg ml-4">
+    {% endif %}
+</div>

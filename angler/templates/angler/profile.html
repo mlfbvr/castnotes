@@ -59,18 +59,8 @@
                         <div class="bg-blue-50 rounded-lg p-4">
                             <p class="text-gray-700">Total catches: <span class="font-bold text-lg">{{ total_catches_count }}</span></p>
                         </div>
-                        {% for catch in user.catches.all %}
-                            <div class="mt-4 p-4 bg-white rounded-lg shadow flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">{{ catch.fish.official_name }}</h3>
-                                    <p><a href="{% url 'catch-details' catch.pk %}">View Details</a></p>
-                                    <p class="text-gray-700">Length: {{ catch.length }} {{ catch.length_unit }}</p>
-                                    <p class="text-gray-700">Weight: {{ catch.weight }} {{ catch.weight_unit }}</p>
-                                    <p class="text-gray-700">Location Caught: {{ catch.catch_location }}</p>
-                                    <p class="text-gray-700">Date Caught: {{ catch.catch_datetime }}</p>
-                                </div>
-                                <img src="{{ catch.photo.url }}" alt="Catch Photo" class="h-32 w-32 object-cover rounded-lg ml-4">
-                           </div>
+                        {% for catch in catches.all %}
+                            {% include 'catch.html' with catch=catch %}
                         {% empty %}
                             <p class="text-gray-600">You haven't logged any catches yet.</p>
                         {% endfor %}
@@ -79,14 +69,14 @@
                     <!-- Action Buttons -->
                     <div class="flex flex-col gap-3">
                         <a href="{% url 'log-catch' %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded text-center text-lg">
-                            + Log New Catch
+                            🐟️ Log New Catch
                         </a>
                         <div class="flex space-x-4">
                             <a href="{% url 'angler-home' %}" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">
-                                Back to Home
+                                🏚️ Back to Home
                             </a>
                             <a href="{% url 'logout' %}" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
-                                Logout
+                                🚪️ Logout
                             </a>
                         </div>
                     </div>

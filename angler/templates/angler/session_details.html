@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        {% include 'back.html' %}
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-4 py-5 sm:px-6">
+                <h1 class="text-3xl font-bold text-gray-900">Session Details</h1>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+                <div class="space-y-8">
+                    <!-- fishing_session Information -->
+                    {% if fishing_session %}
+                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Started</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ fishing_session.fishing_session.start_datetime }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Ended</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ fishing_session.fishing_session.end_datetime|default:'Ongoing' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">User</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ fishing_session.fishing_session.user }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">UUID</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ fishing_session.fishing_session.uuid }}</p>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Catches in this Session</label>
+                            <div class="mt-2 space">
+                                {% for catch in fishing_session.catches.all %}
+                                    {% include 'catch.html' with catch=catch %}
+                                {% empty %}
+                                    <p class="text-gray-600">No catches logged in this session.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Location</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ fishing_session.fishing_session.location }}</p>
+                            <div class="h-64 w-full bg-gray-200">Map</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-red-500">Session not found or you do not have permission to view this session.</p>
+                    {% endif %}
+                </div>
+            </div>
+ </div>
+    </div>
+</div>
+{% endblock %}

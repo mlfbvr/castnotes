@@ -8,6 +8,17 @@ from angler.models import Catch, FishingSession
 class HomeView(TemplateView):
     """Default view for angler app. Prompts login or registration if not authenticated."""
 
+    def get_context_data(self, **kwargs):
+        active_fishing_session = None
+        if self.request.user.is_authenticated:
+            active_fishing_session = FishingSession.objects.filter(
+                user=self.request.user, end_datetime__isnull=True
+            ).first()
+        context = super().get_context_data(**kwargs)
+        context["active_fishing_session"] = active_fishing_session
+        context["user"] = self.request.user
+        return context
+
     def get_template_names(self):
         if self.request.user.is_authenticated:
             return "angler/home.html"
@@ -55,17 +66,46 @@ class LogCatchView(LoginRequiredMixin, View):
             else:
                 fish = form.cleaned_data.get("fish")
 
+            # Get the fishing session if provided
+            session_uuid = form.cleaned_data.get("session_uuid")
+            session = None
+            if session_uuid:
+                session = FishingSession.objects.filter(
+                    user=request.user, uuid=session_uuid
+                ).first()
+
             catch = form.save(commit=False)
             catch.user = request.user
             catch.fish = fish
+            catch.session = session
             catch.save()
             return redirect("profile")
 
     def get(self, request):
         from .forms import CatchForm
 
-        form = CatchForm()
-        return render(request, "angler/log_catch.html", {"form": form})
+        active_fishing_session = FishingSession.objects.filter(
+            user=request.user, end_datetime__isnull=True
+        ).first()
+
+        # Include the active fishing session in the context of the form
+        form = CatchForm(
+            initial={
+                "session_uuid": (
+                    active_fishing_session.uuid if active_fishing_session else None
+                ),
+                "catch_location": (
+                    active_fishing_session.location if active_fishing_session else ""
+                ),
+            }
+        )
+        return render(
+            request,
+            "angler/log_catch.html",
+            {
+                "form": form,
+            },
+        )
 
 
 class CatchDetailsView(LoginRequiredMixin, DetailView):
@@ -99,6 +139,11 @@ class CreateFishingSessionView(LoginRequiredMixin, View):
     def get(self, request):
         from .forms import FishingSessionForm
 
+        active_fishing_session = FishingSession.objects.filter(
+            user=request.user, end_datetime__isnull=True
+        ).first()
+        if active_fishing_session:
+            return redirect("profile")
         form = FishingSessionForm()
         return render(request, "angler/fishing_session.html", {"form": form})
 
@@ -113,3 +158,28 @@ class CreateFishingSessionView(LoginRequiredMixin, View):
             session.start_datetime = datetime.now()
             session.save()
             return redirect("profile")
+
+
+class CurrentFishingSessionView(LoginRequiredMixin, DetailView):
+    """View to display the current active fishing session."""
+
+    model = FishingSession
+    template_name = "angler/session_details.html"
+    context_object_name = "fishing_session"
+    catches = None
+
+    def get_object(self, queryset=None):
+        """Retrieve the active fishing session for the logged-in user."""
+
+        # Get the fishes caught during this session
+        fishing_session = FishingSession.objects.filter(
+            user=self.request.user, end_datetime__isnull=True
+        ).first()
+        catches = (
+            Catch.objects.filter(session=fishing_session) if fishing_session else None
+        )
+
+        return {
+            "fishing_session": fishing_session,
+            "catches": catches,
+        }

@@ -14,6 +14,14 @@
             <form method="post" enctype="multipart/form-data" class="space-y-6 p-6">
                 {% csrf_token %}
 
+                {% if form.session_uuid %}
+                <!-- Fishing Session -->
+                <label for="{{ form.session_uuid.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.session_uuid.label }} <span class="text-red-500">*</span>
+                </label>
+                {{ form.session_uuid }}
+                {% endif %}
+
                 <!-- Fish Species -->
                 <div>
                     <label for="{{ form.fish.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">

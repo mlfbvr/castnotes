@@ -1,14 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="flex flex-col items-center justify-center min-h-screen">
-  <h1 class="text-3xl font-bold mb-4">Welcome back to CastNotes!</h1>
+  <h1 class="text-3xl font-bold mb-4">Welcome back to CastNotes {{ user.full_name|default:user.username }}!</h1>
   <p class="mb-6">You are logged in.</p>
+  <p class="mb-8">Active Fishing Session: {{ active_fishing_session }}</p>
+  <p class="mb-8">What would you like to do today?</p>
   <div>
-    <a href="{% url 'log-catch' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
-      + Log a New Catch
+    {% if active_fishing_session %}
+    <a href="{% url 'session-details' active_fishing_session.uuid %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
+      ⌛️️ View Current Session
     </a>
-    <a href="{% url 'profile' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mx-4">
-      View Your Profile
+    {% else %}
+    <a href="{% url 'fishing-session' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
+      ⌚️ Start Fishing
+    </a>
+    {% endif %}
+    <a href="{% url 'log-catch' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
+      🐟️ Log a New Catch
+    </a>
+    <a href="{% url 'profile' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
+      👤 View Your Profile
     </a>
   </div>
 </div>

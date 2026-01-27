@@ -6,5 +6,12 @@ urlpatterns = [
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("log-catch/", views.LogCatchView.as_view(), name="log-catch"),
     path("catch/<int:pk>/", views.CatchDetailsView.as_view(), name="catch-details"),
-    path("session/", views.CreateFishingSessionView.as_view(), name="fishing-session"),
+    path(
+        "session/new/", views.CreateFishingSessionView.as_view(), name="fishing-session"
+    ),
+    path(
+        "session/<uuid:uuid>/",
+        views.CurrentFishingSessionView.as_view(),
+        name="session-details",
+    ),
 ]

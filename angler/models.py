@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from uuid import uuid4
 
 
 class Fish(models.Model):
@@ -78,19 +79,20 @@ class Catch(models.Model):
         verbose_name = "Catch"
 
     def __str__(self):
-        return f"{self.fish} caught by {self.user} on {self.catch_datetime.strftime('%Y-%m-%d')}"
+        return f"{self.fish} caught by {self.user} on {self.catch_datetime.strftime('%Y-%m-%d')}\nSession: {self.session_id}"
 
 
 class FishingSession(models.Model):
     """Model representing a fishing session."""
 
+    uuid = models.UUIDField(default=uuid4)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="fishing_sessions",
     )
     start_datetime = models.DateTimeField()
-    end_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=255)
     weather_conditions = models.TextField(blank=True)
     notes = models.TextField(blank=True)
