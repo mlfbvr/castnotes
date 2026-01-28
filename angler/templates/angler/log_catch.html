@@ -100,6 +100,8 @@
                     {% if form.catch_location.errors %}
                         <p class="mt-1 text-sm text-red-500">{{ form.catch_location.errors.0 }}</p>
                     {% endif %}
+
+                    <div id="map" style="height: 300px; width: 100%;">Map</div>
                 </div>
 
                 <!-- Date & Time -->
@@ -108,6 +110,8 @@
                         {{ form.catch_datetime.label }} <span class="text-red-500">*</span>
                     </label>
                     {{ form.catch_datetime }}
+                    <a href="#" onclick="document.getElementById('id_catch_datetime').value=new Date().toISOString().slice(0,16); return false;" class="text-sm text-blue-600 hover:underline">Now</a>
+                    <a href="#" onclick="document.getElementById('id_catch_datetime').value=''; return false;" class="text-sm text-blue-600 hover:underline">Clear</a>
                     {% if form.catch_datetime.errors %}
                         <p class="mt-1 text-sm text-red-500">{{ form.catch_datetime.errors.0 }}</p>
                     {% endif %}
@@ -183,6 +187,7 @@
     const fishSelect = document.getElementById('id_fish_select');
     const newFishSpeciesInput = document.getElementById('id_new_fish_species');
     const newFishSpeciesDiv = newFishSpeciesInput?.parentElement || null;
+    const catchDateTimeField = document.getElementById('id_catch_datetime');
 
     function updateFishFieldsVisibility() {
         if (fishSelect && newFishSpeciesInput && newFishSpeciesDiv) {

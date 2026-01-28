@@ -3,6 +3,7 @@ from django.views import View
 from django.views.generic import DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from angler.models import Catch, FishingSession
+from datetime import datetime
 
 
 class HomeView(TemplateView):
@@ -97,6 +98,7 @@ class LogCatchView(LoginRequiredMixin, View):
                 "catch_location": (
                     active_fishing_session.location if active_fishing_session else ""
                 ),
+                "catch_datetime": datetime.now(),
             }
         )
         return render(
@@ -157,10 +159,10 @@ class CreateFishingSessionView(LoginRequiredMixin, View):
             session.user = request.user
             session.start_datetime = datetime.now()
             session.save()
-            return redirect("profile")
+            return redirect("session-details", uuid=session.uuid)
 
 
-class CurrentFishingSessionView(LoginRequiredMixin, DetailView):
+class FishingSessionDetailsView(LoginRequiredMixin, DetailView):
     """View to display the current active fishing session."""
 
     model = FishingSession
@@ -170,16 +172,48 @@ class CurrentFishingSessionView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         """Retrieve the active fishing session for the logged-in user."""
-
+        #
         # Get the fishes caught during this session
         fishing_session = FishingSession.objects.filter(
-            user=self.request.user, end_datetime__isnull=True
+            user=self.request.user, uuid=self.kwargs.get("uuid")
         ).first()
         catches = (
             Catch.objects.filter(session=fishing_session) if fishing_session else None
         )
-
+        #
         return {
             "fishing_session": fishing_session,
             "catches": catches,
         }
+
+
+class ListFishingSessionsView(LoginRequiredMixin, View):
+    """View to list all fishing sessions of the logged-in user."""
+
+    def get(self, request):
+        sessions = FishingSession.objects.filter(user=request.user).order_by(
+            "-start_datetime"
+        )
+
+        return render(
+            request,
+            "angler/sessions_list.html",
+            {
+                "sessions": sessions,
+            },
+        )
+
+
+class EndFishingSessionView(LoginRequiredMixin, View):
+    """View to end an active fishing session."""
+
+    def post(self, request, pk):
+        from datetime import datetime
+        from django.shortcuts import get_object_or_404
+
+        fishing_session = get_object_or_404(
+            FishingSession, pk=pk, user=request.user, end_datetime__isnull=True
+        )
+        fishing_session.end_datetime = datetime.now()
+        fishing_session.save()
+        return redirect("session-details", uuid=fishing_session.uuid)

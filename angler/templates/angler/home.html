@@ -4,6 +4,9 @@
   <h1 class="text-3xl font-bold mb-4">Welcome back to CastNotes {{ user.full_name|default:user.username }}!</h1>
   <p class="mb-6">You are logged in.</p>
   <p class="mb-8">Active Fishing Session: {{ active_fishing_session }}</p>
+  {% if active_fishing_session %}
+    <div class="bg-gray-300" style="height: 300px; width: 100%;">Map</div>
+  {% endif %}
   <p class="mb-8">What would you like to do today?</p>
   <div>
     {% if active_fishing_session %}

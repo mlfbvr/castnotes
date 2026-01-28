@@ -141,5 +141,5 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Redirect unauthenticated users to login page
 LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "profile"
+LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
