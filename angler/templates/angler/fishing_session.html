@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load leaflet_tags %}
+{% block extrahead %}
+    {% leaflet_js plugins="ALL" %}
+    {% leaflet_css plugins="ALL" %}
+{% endblock extrahead %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -19,12 +24,16 @@
                         </div>
                         <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700">Location</label>
                         <div class="flex flex-col justify-between items-center md:flex-row md:items-center md:space-x-4">
-                            <div class="flex-grow mr-4">
+                            <div class="flex flex-grow md:w-auto mt-4 md:mt-0">
                                 {{ form.location }}
+                                <a href="javascript:void(0);" id="link_get_location" class="flex-grow bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded text-center text-lg">
+                                    Get Current Location
+                                </a>
+                                <div class="hidden flex-grow bg-gray-600 text-white font-bold py-3 px-4 rounded text-center text-lg">Getting location...</div>
                             </div>
-                            <div>
-                                <a href="javascript:void(0);" id="link_get_location">Get Current Location</a>
-                            </div>
+                        </div>
+                        <div>
+                            {% leaflet_map "yourmap" %}
                         </div>
                         <div>
                             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -39,6 +48,7 @@
 </div>
 
 <script>
+    // Function to set the location input value in the id_location form field
     function setLocation(latitude, longitude) {
         const locationInput = document.getElementById("id_location");
         if (locationInput) {
@@ -46,16 +56,78 @@
         }
     }
 
+    // Listen for the map initialization event
+    window.addEventListener("map:init", function (e) {
+        // The map object is inside e.detail.map
+        window.myMap = e.detail.map; // Store map globally for later use
+
+        window.myMap.on('click', function(e) { // On map click event
+            // Get latitude and longitude from the click event
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            // Update the location input with the clicked coordinates
+            setLocation(lat, lng);
+
+            // If a marker already exists, remove it
+            if (window.marker) {
+                window.myMap.removeLayer(window.marker);
+            }
+
+            // Add a marker at the clicked location
+            window.marker = L.marker([lat, lng], {
+                draggable: true,
+                autoPan: true,
+            }).addTo(window.myMap);
+
+            // Update location input when marker is dragged
+            window.marker.on('dragend', function(e) {
+                const latlng = e.target.getLatLng();
+                setLocation(latlng.lat, latlng.lng);
+            });
+        });
+    }, false);
+
     document.addEventListener("DOMContentLoaded", function() {
-        const geoLink = document.getElementById("link_get_location");
-        if (geoLink) {
-            geoLink.addEventListener("click", function(event) {
-                event.preventDefault();
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    setLocation(position.coords.latitude, position.coords.longitude);
+        const geoLink = document.getElementById("link_get_location"); // Link to get geolocation
+        if (geoLink) { // Ensure the link exists
+            geoLink.addEventListener("click", function(event) { // On click event for the geolink
+                event.preventDefault(); // Prevent default link behavior
+                event.target.style.display = "none"; // Hide the link
+                event.target.nextElementSibling.style.display = "block"; // Show loading indicator
+
+                navigator.geolocation.getCurrentPosition(function(position) { // Get current position
+                    setLocation(position.coords.latitude, position.coords.longitude); // Set location in the input field
+                    event.target.style.display = "block"; // Hide the link
+                    event.target.nextElementSibling.style.display = "none"; // Show loading indicator
+
+
+                    if (!window.myMap) { // Ensure the map is initialized
+                        console.error("Map is not initialized yet."); // log error if map not initialized
+                        return; // exit if map not initialized
+                    }
+                    if (window.marker) { // If a marker already exists, remove it
+                        window.myMap.removeLayer(window.marker);
+                    }
+
+                    // Add a marker at the current location
+                    window.marker = L.marker([position.coords.latitude, position.coords.longitude], {
+                        draggable: true,
+                        autoPan: true,
+                    }).addTo(window.myMap);
+
+                    // Update location input when marker is dragged
+                    window.marker.on('dragend', function(e) {
+                        const latlng = e.target.getLatLng();
+                        setLocation(latlng.lat, latlng.lng);
+                    });
+
+                    // Center the map on the current location
+                    window.myMap.setView([position.coords.latitude, position.coords.longitude], 15);
                 });
             });
         }
     });
+    
 </script>
 {% endblock %}

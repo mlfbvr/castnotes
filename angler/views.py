@@ -17,6 +17,14 @@ class HomeView(TemplateView):
             ).first()
         context = super().get_context_data(**kwargs)
         context["active_fishing_session"] = active_fishing_session
+        context["active_fishing_session_location"] = (
+            {
+                "latitude": float(active_fishing_session.location.split(",")[1]),
+                "longitude": float(active_fishing_session.location.split(",")[0]),
+            }
+            if active_fishing_session
+            else None
+        )
         context["user"] = self.request.user
         return context
 
@@ -101,11 +109,21 @@ class LogCatchView(LoginRequiredMixin, View):
                 "catch_datetime": datetime.now(),
             }
         )
+
+        active_fishing_session_location = (
+            {
+                "latitude": float(active_fishing_session.location.split(",")[1]),
+                "longitude": float(active_fishing_session.location.split(",")[0]),
+            }
+            if active_fishing_session
+            else None
+        )
         return render(
             request,
             "angler/log_catch.html",
             {
                 "form": form,
+                "active_fishing_session_location": active_fishing_session_location,
             },
         )
 
@@ -180,9 +198,16 @@ class FishingSessionDetailsView(LoginRequiredMixin, DetailView):
         catches = (
             Catch.objects.filter(session=fishing_session) if fishing_session else None
         )
-        #
         return {
             "fishing_session": fishing_session,
+            "location": (
+                {
+                    "latitude": float(fishing_session.location.split(",")[1]),
+                    "longitude": float(fishing_session.location.split(",")[0]),
+                }
+                if fishing_session
+                else None
+            ),
             "catches": catches,
         }
 
