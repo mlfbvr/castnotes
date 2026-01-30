@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.utils import timezone
 from decimal import Decimal
-from ..models import Fish
-from ..forms import CatchForm
+from angler.models import Fish
+from angler.forms import CatchForm
 
 
 class FishSpeciesFormValidationTestCase(TestCase):

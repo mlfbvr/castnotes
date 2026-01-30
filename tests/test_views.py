@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from ..models import Fish, Catch
+from angler.models import Fish, Catch
 
 User = get_user_model()
 

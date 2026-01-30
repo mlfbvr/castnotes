@@ -1,7 +1,8 @@
+from datetime import datetime
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from decimal import Decimal
-from ..models import Fish, Catch
+from angler.models import Fish, Catch
 
 User = get_user_model()
 
@@ -72,7 +73,7 @@ class CatchModelTest(TestCase):
             weight=Decimal("2.3"),
             weight_unit="kg",
             catch_location="Lake Springfield",
-            catch_datetime="2024-06-01T10:00:00Z",
+            catch_datetime=datetime.fromisoformat("2024-06-01T10:00:00+00:00"),
             released=True,
             is_public=True,
         )
@@ -88,5 +89,5 @@ class CatchModelTest(TestCase):
         """Test that Catch model string representation works."""
         self.assertEqual(
             str(self.catch),
-            f"Catch of {self.fish.official_name} by {self.user.username} on 2024-06-01 10:00:00+00:00",
+            f"Catch of {self.fish.official_name} by {self.user.username} on 2024-06-01",
         )

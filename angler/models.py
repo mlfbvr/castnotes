@@ -79,7 +79,7 @@ class Catch(models.Model):
         verbose_name = "Catch"
 
     def __str__(self):
-        return f"{self.fish} caught by {self.user} on {self.catch_datetime.strftime('%Y-%m-%d')}\nSession: {self.session_id}"
+        return f"{self.fish} caught by {self.user} on {self.catch_datetime.strftime('%Y-%m-%d')} at {self.catch_datetime.strftime('%H:%M')}"
 
 
 class FishingSession(models.Model):
