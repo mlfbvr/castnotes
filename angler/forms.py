@@ -9,6 +9,7 @@ class CatchForm(forms.ModelForm):
     """Form for logging a new catch with all details."""
 
     def __init__(self, *args, **kwargs):
+        print("Initializing CatchForm with args:", args, "and kwargs:", kwargs)
         super().__init__(*args, **kwargs)
 
         if not self.initial.get("session_uuid"):

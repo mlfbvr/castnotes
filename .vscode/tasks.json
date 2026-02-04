@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pytest: Run Tests",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/pytest",
+      "args": ["-v"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(FAIL|ERROR|OK):\\s+(.+)",
+          "file": 2,
+          "message": 1
+        }
+      }
+    },
+    {
+      "label": "pytest: Run Tests (Watch Mode)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "source .venv/bin/activate && while inotifywait -e modify -r angler/ accounts/ tests/ 2>/dev/null; do clear && pytest; done"
+      ],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(FAILED|OK)",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^(Creating|Using)",
+          "endsPattern": "(FAILED|OK)"
+        }
+      }
+    }
+  ]
+}
