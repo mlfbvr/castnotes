@@ -88,7 +88,12 @@ class LogCatchView(LoginRequiredMixin, View):
             catch.fish = fish
             catch.session = session
             catch.save()
-            return redirect("profile")
+            # return redirect("profile")
+            return render(
+                request,
+                "angler/partials/log_new_catch.html",
+                {"form": form, "time": datetime.now()},
+            )
 
     def get(self, request):
         from .forms import CatchForm

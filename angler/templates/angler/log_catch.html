@@ -17,7 +17,7 @@
 
         <!-- Form Card -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <form method="post" enctype="multipart/form-data" class="space-y-6 p-6">
+            <form hx-post="/log-catch/" hx-target="#log-catch-output" enctype="multipart/form-data" class="space-y-6 p-6">
                 {% csrf_token %}
 
                 {% if form.session_uuid %}
@@ -186,6 +186,7 @@
                     </a>
                 </div>
             </form>
+            <div id="log-catch-output" class="px-4 mt-4"></div>
         </div>
     </div>
 </div>
