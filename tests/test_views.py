@@ -9,9 +9,7 @@ User = get_user_model()
 @pytest.fixture
 def user():
     """Fixture for User instance."""
-    return User.objects.create_user(
-        username="testangler", password="testpass123"
-    )
+    return User.objects.create_user(username="testangler", password="testpass123")
 
 
 @pytest.fixture
@@ -30,6 +28,7 @@ def existing_fish():
 def client():
     """Fixture for Django test client."""
     from django.test import Client
+
     return Client()
 
 
@@ -50,7 +49,7 @@ def test_log_catch_creates_new_fish_species(client, user):
     }
     response = client.post("/log-catch/", catch_data)
 
-    assert response.status_code == 302
+    assert response.status_code == 200
     assert Fish.objects.filter(official_name="Trout").exists()
 
     trout = Fish.objects.get(official_name="Trout")
@@ -73,18 +72,20 @@ def test_log_catch_with_existing_fish(client, user, existing_fish):
         "released": True,
         "is_public": True,
     }
-    response = client.post("/log-catch/", catch_data)
+    response = client.post("/log-catch/", catch_data)  # Log catch with existing fish
 
-    assert response.status_code == 302
+    assert response.status_code == 200  # Check for successful response
 
-    catch = Catch.objects.filter(user=user, fish=existing_fish).first()
+    catch = Catch.objects.filter(
+        user=user, fish=existing_fish
+    ).first()  # Retrieve the catch
     assert catch is not None
 
 
 @pytest.mark.django_db
 def test_duplicate_fish_species_not_created(client, user):
     """Test that duplicate fish species are not created using get_or_create."""
-    fish_count_before = Fish.objects.count()
+    fish_count_before = Fish.objects.count()  # 0
     client.login(username="testangler", password="testpass123")
 
     catch_data_1 = {
@@ -98,7 +99,7 @@ def test_duplicate_fish_species_not_created(client, user):
         "released": True,
         "is_public": True,
     }
-    client.post("/log-catch/", catch_data_1)
+    client.post("/log-catch/", catch_data_1)  # Log first catch
 
     catch_data_2 = {
         "new_fish_species": "Salmon",
@@ -111,8 +112,12 @@ def test_duplicate_fish_species_not_created(client, user):
         "released": True,
         "is_public": True,
     }
-    client.post("/log-catch/", catch_data_2)
+    client.post("/log-catch/", catch_data_2)  # Log second catch with same species
 
-    fish_count_after = Fish.objects.count()
-    assert fish_count_after - fish_count_before == 1
-    assert Catch.objects.filter(fish__official_name="Salmon").count() == 2
+    fish_count_after = Fish.objects.count()  # 1
+    assert (
+        fish_count_after - fish_count_before == 1
+    )  # 1 species created. 2 would be duplicate
+    assert (
+        Catch.objects.filter(fish__official_name="Salmon").count() == 2
+    )  # 2 catches logged

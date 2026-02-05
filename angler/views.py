@@ -4,6 +4,7 @@ from django.views.generic import DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from angler.models import Catch, FishingSession
 from datetime import datetime
+from angler.utils import get_lat_long
 
 
 class HomeView(TemplateView):
@@ -17,10 +18,20 @@ class HomeView(TemplateView):
             ).first()
         context = super().get_context_data(**kwargs)
         context["active_fishing_session"] = active_fishing_session
+        try:
+            latitude, longitude = (
+                get_lat_long(active_fishing_session.location)
+                if active_fishing_session
+                else (None, None)
+            )
+        except ValueError as e:
+            print(f"Error parsing location: {e}")
+            latitude, longitude = None, None
+
         context["active_fishing_session_location"] = (
             {
-                "latitude": float(active_fishing_session.location.split(",")[1]),
-                "longitude": float(active_fishing_session.location.split(",")[0]),
+                "latitude": latitude or 0,
+                "longitude": longitude or 0,
             }
             if active_fishing_session
             else None
@@ -83,17 +94,35 @@ class LogCatchView(LoginRequiredMixin, View):
                     user=request.user, uuid=session_uuid
                 ).first()
 
-            catch = form.save(commit=False)
-            catch.user = request.user
-            catch.fish = fish
-            catch.session = session
-            catch.save()
-            # return redirect("profile")
-            return render(
-                request,
-                "angler/partials/log_new_catch.html",
-                {"form": form, "time": datetime.now()},
-            )
+            try:
+                catch = form.save(
+                    commit=False
+                )  # Create the catch instance without saving to database
+                catch.user = request.user  # Assign the current user to the catch
+                catch.fish = fish  # Assign the fish (new or existing) to the catch
+                catch.session = (
+                    session  # Assign the fishing session to the catch if available
+                )
+                catch.save()  # Save the catch to the database
+
+                # Render the log_new_catch partial with success message
+                return render(
+                    request,
+                    "angler/partials/log_new_catch.html",
+                    {"form": form, "time": datetime.now()},
+                )
+            except Exception as e:
+                # Catch any database or other errors during catch creation
+                # Log the error for debugging purposes
+                error_message = f"Failed to log catch: {str(e)}"
+                print(error_message)
+
+                # Render the log_new_catch partial with error message
+                return render(
+                    request,
+                    "angler/partials/log_new_catch.html",
+                    {"form": form, "time": datetime.now(), "error": error_message},
+                )
 
     def get(self, request):
         from .forms import CatchForm
@@ -114,11 +143,19 @@ class LogCatchView(LoginRequiredMixin, View):
                 "catch_datetime": datetime.now(),
             }
         )
+        try:
+            latitude, longitude = (
+                get_lat_long(active_fishing_session.location)
+                if active_fishing_session
+                else (None, None)
+            )
+        except ValueError:
+            latitude, longitude = None, None
 
         active_fishing_session_location = (
             {
-                "latitude": float(active_fishing_session.location.split(",")[1]),
-                "longitude": float(active_fishing_session.location.split(",")[0]),
+                "latitude": latitude or 0,
+                "longitude": longitude or 0,
             }
             if active_fishing_session
             else None
@@ -178,11 +215,33 @@ class CreateFishingSessionView(LoginRequiredMixin, View):
 
         form = FishingSessionForm(request.POST)
         if form.is_valid():
-            session = form.save(commit=False)
-            session.user = request.user
-            session.start_datetime = datetime.now()
-            session.save()
-            return redirect("session-details", uuid=session.uuid)
+            try:
+                session = form.save(
+                    commit=False
+                )  # Create session instance without saving to database
+                session.user = request.user  # Assign the current user to the session
+                session.start_datetime = (
+                    datetime.now()
+                )  # Set the session start time to now
+                session.save()  # Attempt to save the session to the database
+
+                # Redirect to the session details page using the generated UUID
+                return redirect("session-details", uuid=session.uuid)
+            except Exception as e:
+                # Catch any database or other errors during session creation
+                # Log the error for debugging purposes
+                error_message = f"Error creating fishing session: {str(e)}"
+                print(error_message)
+
+                # Re-render the form with error message for user feedback
+                form.add_error(
+                    None, "Failed to create fishing session. Please try again."
+                )
+                return render(
+                    request,
+                    "angler/fishing_session.html",
+                    {"form": form, "error": error_message},
+                )
 
 
 class FishingSessionDetailsView(LoginRequiredMixin, DetailView):
@@ -203,12 +262,21 @@ class FishingSessionDetailsView(LoginRequiredMixin, DetailView):
         catches = (
             Catch.objects.filter(session=fishing_session) if fishing_session else None
         )
+        try:
+            latitude, longitude = (
+                get_lat_long(fishing_session.location)
+                if fishing_session
+                else (None, None)
+            )
+        except ValueError:
+            latitude, longitude = None, None
+
         return {
             "fishing_session": fishing_session,
             "location": (
                 {
-                    "latitude": float(fishing_session.location.split(",")[1]),
-                    "longitude": float(fishing_session.location.split(",")[0]),
+                    "latitude": latitude or 0,
+                    "longitude": longitude or 0,
                 }
                 if fishing_session
                 else None
