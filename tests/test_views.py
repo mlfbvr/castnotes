@@ -9,7 +9,9 @@ User = get_user_model()
 @pytest.fixture
 def user():
     """Fixture for User instance."""
-    return User.objects.create_user(username="testangler", password="testpass123")
+    return User.objects.create_user(
+        username="testangler", password="testpass123"
+    )
 
 
 @pytest.fixture
