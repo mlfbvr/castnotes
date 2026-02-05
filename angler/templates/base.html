@@ -8,6 +8,17 @@
     {% block extrahead %}{% endblock extrahead %}
     {% load static %}
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+    <script defer>
+        document.addEventListener("DOMContentLoaded", function(event) {
+          document.body.addEventListener('htmx:validateUrl', function (evt) {
+            // only allow requests to the current server as well as myserver.com
+            if (!evt.detail.sameHost && evt.detail.url.hostname !== "myserver.com") {
+              evt.preventDefault();
+            }
+          });
+        });
+    </script>
   </head>
   <body class="bg-gray-100 min-h-screen">
     <nav class="bg-white shadow mb-8">

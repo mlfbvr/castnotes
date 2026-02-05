@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from uuid import uuid4
 
+from angler.utils import get_lat_long
+
 
 class Fish(models.Model):
     """Model representing a fish species."""
@@ -102,4 +104,5 @@ class FishingSession(models.Model):
         verbose_name = "Fishing Session"
 
     def __str__(self):
-        return f"Fishing session by {self.user} at {self.location} on {self.start_datetime.strftime('%Y-%m-%d')}"
+        latitude, longitude = get_lat_long(self.location)
+        return f"Fishing session by {self.user} at ({latitude}, {longitude}) on {self.start_datetime.strftime('%Y-%m-%d')}"

@@ -9,7 +9,7 @@
 <div class="flex flex-col items-center justify-center min-h-screen">
   <h1 class="text-3xl font-bold mb-4">Welcome back to CastNotes {{ user.full_name|default:user.username }}!</h1>
   <p class="mb-6">You are logged in.</p>
-  <p class="mb-8">Active Fishing Session: {{ active_fishing_session }}</p>
+  <p class="mb-8 text-center">Active Fishing Session:<br />{{ active_fishing_session }}</p>
   {% if active_fishing_session %}
     <div class="mb-8 w-full max-w-2xl">
       {% leaflet_map "yourmap" %}
@@ -44,8 +44,8 @@
             const latitude = markerData.latitude; // get latitude from markerData
             const longitude = markerData.longitude; // get longitude from markerData
             if (window.myMap) { // check if map is initialized
-                const marker = L.marker([longitude, latitude]).addTo(window.myMap); // add marker to map
-                window.myMap.setView([longitude, latitude], 15); // center map on marker
+                const marker = L.marker([latitude, longitude]).addTo(window.myMap); // add marker to map
+                window.myMap.setView([latitude, longitude], 15); // center map on marker
             } else {
                 console.error("Map is not initialized yet."); // log error if map not initialized
             }

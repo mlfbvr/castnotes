@@ -1,0 +1,9 @@
+<div class="mt-4 w-5/6 mx-auto text-center">
+    <div class="font-bold text-green-600">{{ time }}</div>
+    {% if error %}
+        <div class="text-red-600 font-semibold">Error: {{ error }}</div>
+    {% else %} 
+        <p>Catch logged successfully! Go back to the form to log another catch.</p>
+    {% endif %}
+    <p><a href="/profile" class="text-blue-600 hover:underline">Click here to return to your profile</a></p>
+</div>
