@@ -59,6 +59,10 @@
                                 {% leaflet_map "yourmap" %}
                             </div>
                         </div>
+                        <div class="sm:col-span-2">
+                            Current weather at session location:
+                            <div id="weather_info" class="mt-2 text-gray-900" hx-get="{% url 'weather-data' %}?location={{ fishing_session.location.latitude }},{{ fishing_session.location.longitude }}" hx-trigger="load" hx-target="#weather_info" hx-swap="innerHTML"></div>
+                        </div>
                     </div>
                     {% else %}
                     <p class="text-red-500">Session not found or you do not have permission to view this session.</p>

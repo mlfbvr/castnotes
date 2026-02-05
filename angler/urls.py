@@ -7,6 +7,7 @@ urlpatterns = [
     path("log-catch/", views.LogCatchView.as_view(), name="log-catch"),
     path("catch/<int:pk>/", views.CatchDetailsView.as_view(), name="catch-details"),
     path("session/", views.ListFishingSessionsView.as_view(), name="fishing-sessions"),
+    path("weather/", views.CurrentWeatherConditionsView.as_view(), name="weather-data"),
     path(
         "session/new/", views.CreateFishingSessionView.as_view(), name="fishing-session"
     ),
