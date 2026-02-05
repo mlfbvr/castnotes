@@ -54,7 +54,7 @@
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Location</label>
-                            <p class="mt-1 text-lg text-gray-900">Long: {{ fishing_session.location.longitude }}, Lat: {{ fishing_session.location.latitude }}</p>
+                            <p class="mt-1 text-lg text-gray-900">Lat: {{ fishing_session.location.latitude }}, Lon: {{ fishing_session.location.longitude }}</p>
                             <div>
                                 {% leaflet_map "yourmap" %}
                             </div>

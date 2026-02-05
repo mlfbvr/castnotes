@@ -87,12 +87,7 @@ class CatchForm(forms.ModelForm):
     catch_location = forms.CharField(
         label="Location",
         max_length=255,
-        widget=forms.TextInput(
-            attrs={
-                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
-                "placeholder": "Where did you catch this fish?",
-            }
-        ),
+        widget=forms.HiddenInput(),
     )
 
     catch_datetime = forms.DateTimeField(

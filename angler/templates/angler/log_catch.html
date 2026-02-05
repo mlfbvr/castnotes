@@ -98,11 +98,19 @@
                 </div>
 
                 <!-- Location -->
-                <div>
+                <div></div>
                     <label for="{{ form.catch_location.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
                         {{ form.catch_location.label }} <span class="text-red-500">*</span>
+                        {{ form.catch_location }}
                     </label>
-                    {{ form.catch_location }}
+                    <div class="flex flex-col justify-between items-center md:flex-row md:items-center md:space-x-4 gap-y-6">
+                        <div class="flex flex-grow md:w-auto mt-4 md:mt-0">
+                            <a href="javascript:void(0);" id="link_get_location" class="flex-grow bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded text-center text-lg">
+                                Get Current Location
+                            </a>
+                            <div class="hidden flex-grow bg-gray-600 text-white font-bold py-3 px-4 rounded text-center text-lg">Getting location...</div>
+                        </div>
+                    </div>
                     {% if form.catch_location.errors %}
                         <p class="mt-1 text-sm text-red-500">{{ form.catch_location.errors.0 }}</p>
                     {% endif %}
@@ -256,11 +264,11 @@
             const latitude = markerData.latitude; // get latitude from markerData
             const longitude = markerData.longitude; // get longitude from markerData
             if (window.myMap) { // check if map is initialized
-                window.marker = L.marker([longitude, latitude], {
+                window.marker = L.marker([latitude, longitude], {
                     draggable: true,
                     autoPan: true,
                 }).addTo(window.myMap); // add marker to map
-                window.myMap.setView([longitude, latitude], 15); // center map on marker
+                window.myMap.setView([latitude, longitude], 15); // center map on marker
 
                 // Update location input when marker is dragged
                 window.marker.on('dragend', function(e) {
@@ -271,6 +279,46 @@
                 console.error("Map is not initialized yet."); // log error if map not initialized
             }
         }
-     }, false);
-</script>
+    }, false);
+    document.addEventListener("DOMContentLoaded", function() {
+        const geoLink = document.getElementById("link_get_location"); // Link to get geolocation
+        if (geoLink) { // Ensure the link exists
+            geoLink.addEventListener("click", function(event) { // On click event for the geolink
+                event.preventDefault(); // Prevent default link behavior
+                event.target.style.display = "none"; // Hide the link
+                event.target.nextElementSibling.style.display = "block"; // Show loading indicator
+
+                navigator.geolocation.getCurrentPosition(function(position) { // Get current position
+                    setLocation(position.coords.latitude, position.coords.longitude); // Set location in the input field
+                    event.target.style.display = "block"; // Hide the link
+                    event.target.nextElementSibling.style.display = "none"; // Show loading indicator
+
+
+                    if (!window.myMap) { // Ensure the map is initialized
+                        console.error("Map is not initialized yet."); // log error if map not initialized
+                        return; // exit if map not initialized
+                    }
+                    if (window.marker) { // If a marker already exists, remove it
+                        window.myMap.removeLayer(window.marker);
+                    }
+
+                    // Add a marker at the current location
+                    window.marker = L.marker([position.coords.latitude, position.coords.longitude], {
+                        draggable: true,
+                        autoPan: true,
+                    }).addTo(window.myMap);
+
+                    // Update location input when marker is dragged
+                    window.marker.on('dragend', function(e) {
+                        const latlng = e.target.getLatLng();
+                        setLocation(latlng.lat, latlng.lng);
+                    });
+
+                    // Center the map on the current location
+                    window.myMap.setView([position.coords.latitude, position.coords.longitude], 15);
+                });
+            });
+        }
+    });
+ </script>
 {% endblock %}

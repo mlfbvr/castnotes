@@ -123,6 +123,17 @@ class LogCatchView(LoginRequiredMixin, View):
                     "angler/partials/log_new_catch.html",
                     {"form": form, "time": datetime.now(), "error": error_message},
                 )
+        else:
+            # Form is invalid, render the partial with form errors
+            return render(
+                request,
+                "angler/partials/log_new_catch.html",
+                {
+                    "form": form,
+                    "time": datetime.now(),
+                    "error": "Please correct the errors below.",
+                },
+            )
 
     def get(self, request):
         from .forms import CatchForm
