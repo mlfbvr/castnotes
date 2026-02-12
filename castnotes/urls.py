@@ -26,6 +26,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),  # Django admin interface
     path(
+        "accounts/login/", accounts_views.login_view, name="login"
+    ),  # Custom login view
+    path(
         "accounts/register/", accounts_views.register, name="register"
     ),  # User registration
     path("", include("angler.urls")),  # Main angler app URLs
