@@ -1,6 +1,24 @@
 # Views for user registration and account management
+from django.contrib.auth import login
 from django.shortcuts import render, redirect
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserLoginForm
+
+
+def login_view(request):
+    """
+    Handle user login process.
+    This view can be customized to use a custom login form if needed.
+    For now, it simply redirects to the built-in login view provided by Django.
+    """
+    if request.method == "POST":
+        form = UserLoginForm(request, data=request.POST)
+        if form.is_valid():
+            # Log the user in and redirect to the home page
+            login(request, form.get_user())
+            return redirect("angler-home")
+    else:
+        form = UserLoginForm()
+    return render(request, "registration/login.html", {"form": form})
 
 
 def register(request):
