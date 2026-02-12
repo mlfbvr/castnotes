@@ -99,3 +99,14 @@ def test_get_long_lat_non_numeric():
     location = "abc,def"
     with pytest.raises(ValueError):
         get_lat_long(location)
+
+
+def test_only_one_value_with_comma():
+    """Test get_long_lat with only one value but a comma."""
+    location = "34.0522,"
+    with pytest.raises(ValueError):
+        get_lat_long(location)
+
+    location = ",-118.2437"
+    with pytest.raises(ValueError):
+        get_lat_long(location)
