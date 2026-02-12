@@ -105,4 +105,4 @@ class FishingSession(models.Model):
 
     def __str__(self):
         latitude, longitude = get_lat_long(self.location)
-        return f"Fishing session by {self.user} at ({latitude}, {longitude}) on {self.start_datetime.strftime('%Y-%m-%d')}"
+        return f"Fishing session started by {self.user} at ({latitude}, {longitude}) on {self.start_datetime.strftime('%Y-%m-%d')} at {self.start_datetime.strftime('%H:%M')}"
