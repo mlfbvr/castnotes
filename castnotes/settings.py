@@ -88,6 +88,7 @@ DATABASES = {
         "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
         "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
         "PORT": os.environ.get("DB_PORT", "5432"),
+        "OPTIONS": {"options": "-c search_path=castnotes"},
     },
     "backup": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -142,6 +143,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Redirect unauthenticated users to login page
-LOGIN_URL = "/login/"
+LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/login/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
