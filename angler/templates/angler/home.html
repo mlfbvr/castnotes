@@ -26,9 +26,7 @@
       ⌚️ Start Fishing
     </a>
     {% endif %}
-    <a href="{% url 'log-catch' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
-      🐟️ Log a New Catch
-    </a>
+    {% include 'angler/partials/log_catch_button.html' %}
     <a href="{% url 'profile' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mx-4">
       👤 View Your Profile
     </a>
