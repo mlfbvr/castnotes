@@ -11,10 +11,6 @@ class CatchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if not self.initial.get("session_uuid"):
-            # No active session id found, removing session_uuid field
-            del self.fields["session_uuid"]
-
     fish = forms.ModelChoiceField(
         queryset=Fish.objects.all(),
         label="Fish Species",
@@ -160,12 +156,7 @@ class CatchForm(forms.ModelForm):
     session_uuid = forms.UUIDField(
         label="Fishing Session",
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
-                "readonly": "readonly",
-            }
-        ),
+        widget=forms.HiddenInput(),
     )
 
     class Meta:
