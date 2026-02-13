@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% load leaflet_tags %}
+
 {% block extrahead %}
     {% leaflet_js plugins="ALL" %}
     {% leaflet_css plugins="ALL" %}
 {% endblock extrahead %}
+
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
         {% include 'back.html' %}
-        {{ fishing_session.location|json_script:"marker-data" }}
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-4 py-5 sm:px-6">
                 <h1 class="text-3xl font-bold text-gray-900">Session Details</h1>
@@ -58,6 +59,7 @@
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Location</label>
                             <p class="mt-1 text-lg text-gray-900">Lat: {{ fishing_session.location.latitude }}, Lon: {{ fishing_session.location.longitude }}</p>
+                            {{ fishing_session.location|json_script:"session-marker-data" }}
                             <div>
                                 {% leaflet_map "yourmap" %}
                             </div>
@@ -80,7 +82,7 @@
     window.addEventListener("map:init", function (e) {
         // The map object is inside e.detail.map
         window.myMap = e.detail.map; // store map in window.myMap for global access
-        const markerData = JSON.parse(document.getElementById('marker-data').textContent); // Get coords from marker-data
+        const markerData = JSON.parse(document.getElementById('session-marker-data').textContent); // Get coords from marker-data
         if (markerData) { // markerData exists
             const latitude = markerData.latitude; // get latitude from markerData
             const longitude = markerData.longitude; // get longitude from markerData
