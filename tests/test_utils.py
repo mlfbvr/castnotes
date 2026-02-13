@@ -110,3 +110,11 @@ def test_only_one_value_with_comma():
     location = ",-118.2437"
     with pytest.raises(ValueError):
         get_lat_long(location)
+
+
+def test_two_values_with_comma_and_extra_whitespace():
+    """Test get_long_lat with two values, a comma, and extra whitespace."""
+    location = " 34.0522 , -118.2437 "
+    longitude, latitude = get_lat_long(location)
+    assert longitude == 34.0522
+    assert latitude == -118.2437
