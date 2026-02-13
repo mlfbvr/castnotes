@@ -71,7 +71,6 @@ class LogCatchView(LoginRequiredMixin, View):
         form = CatchForm(request.POST, request.FILES)
         if form.is_valid():
             new_fish_species = form.cleaned_data.get("new_fish_species")
-
             # Create a new fish species if provided
             if new_fish_species:
                 fish, _ = Fish.objects.get_or_create(
@@ -88,6 +87,7 @@ class LogCatchView(LoginRequiredMixin, View):
 
             # Get the fishing session if provided
             session_uuid = form.cleaned_data.get("session_uuid")
+            print(f"Received session UUID: {session_uuid}")  # Debugging statement
             session = None
             if session_uuid:
                 session = FishingSession.objects.filter(
@@ -288,6 +288,7 @@ class FishingSessionDetailsView(LoginRequiredMixin, DetailView):
         fishing_session = FishingSession.objects.filter(
             user=self.request.user, uuid=self.kwargs.get("uuid")
         ).first()
+
         catches = (
             Catch.objects.filter(session=fishing_session) if fishing_session else None
         )
@@ -357,7 +358,7 @@ class CurrentWeatherConditionsView(LoginRequiredMixin, View):
             return render(
                 request,
                 "angler/partials/weather_info.html",
-                {"error": "No location provided."},
+                {"form": form_only},
             )
 
         try:
