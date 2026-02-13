@@ -198,8 +198,26 @@ class CatchDetailsView(LoginRequiredMixin, DetailView):
         Retrieve the catch object if it belongs to the logged-in user.
         Return None if the catch does not exist or does not belong to the user.
         """
+
+        catch = Catch.objects.get(user=self.request.user, pk=self.kwargs.get("pk"))
+
         try:
-            return Catch.objects.get(user=self.request.user, pk=self.kwargs.get("pk"))
+            latitude, longitude = (
+                get_lat_long(catch.catch_location)
+                if catch and catch.catch_location
+                else (None, None)
+            )
+        except ValueError:
+            latitude, longitude = None, None
+        try:
+            # print the deconstructed catch for debugging purposes
+            return {
+                "catch": catch,
+                "location": {
+                    "latitude": latitude or 0,
+                    "longitude": longitude or 0,
+                },
+            }
         except Catch.DoesNotExist:
             return None
 
