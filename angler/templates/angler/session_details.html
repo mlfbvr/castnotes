@@ -64,7 +64,7 @@
                         </div>
                         <div class="sm:col-span-2">
                             Current weather at session location:
-                            <div id="weather_info" class="mt-2 text-gray-900" hx-get="{% url 'weather-data' %}?location={{ fishing_session.location.latitude }},{{ fishing_session.location.longitude }}" hx-trigger="load" hx-target="#weather_info" hx-swap="innerHTML"></div>
+                            <div id="weather_info" class="mt-2 text-gray-900" hx-get="{% url 'weather-data' %}?catch_location={{ fishing_session.location.latitude }},{{ fishing_session.location.longitude }}" hx-trigger="load" hx-target="#weather_info" hx-swap="innerHTML"></div>
                         </div>
                     </div>
                     {% else %}
