@@ -4,7 +4,7 @@ from django.views.generic import DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from angler.models import Catch, FishingSession
 from datetime import datetime
-from angler.utils import get_lat_long
+from angler.utils import get_lat_long, get_weather_for_location
 
 
 class HomeView(TemplateView):
@@ -332,12 +332,9 @@ class CurrentWeatherConditionsView(LoginRequiredMixin, View):
     """View to fetch and display current weather conditions for a given location."""
 
     def get(self, request):
-        import requests
-        import os
 
-        location = request.GET.get("location")
+        location = request.GET.get("catch_location")
         form_only = request.GET.get("form", "false").lower() == "true"
-
         if not location:
             return render(
                 request,
@@ -346,29 +343,25 @@ class CurrentWeatherConditionsView(LoginRequiredMixin, View):
             )
 
         try:
-            latitude, longitude = get_lat_long(location)
-        except ValueError:
-            return render(
-                request,
-                "angler/partials/weather_info.html",
-                {"error": "Invalid location format."},
-            )
+            weather_data = get_weather_for_location(location)
 
-        owm_api_key = os.getenv("OWM_API_KEY")  # Replace with your actual API key
-        owm_api_url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={owm_api_key}&units=metric"
-
-        try:
-            response = requests.get(owm_api_url)
-            response.raise_for_status()
-            weather_data = response.json()
+            if form_only:
+                return render(
+                    request,
+                    "angler/partials/weather_info.html",
+                    {"weather_data": weather_data, "form": form_only},
+                )
+            else:
+                return render(
+                    request,
+                    "angler/partials/weather_info.html",
+                    {"weather_data": weather_data},
+                )
+        except Exception as e:
+            error_message = f"Error fetching weather data: {str(e)}"
+            print(error_message)
             return render(
                 request,
                 "angler/partials/weather_info.html",
-                {"weather_data": weather_data, "form": form_only},
-            )
-        except requests.RequestException as e:
-            return render(
-                request,
-                "angler/partials/weather_info.html",
-                {"error": f"Failed to fetch weather data: {str(e)}"},
+                {"error": "Failed to fetch weather data. Please try again."},
             )
