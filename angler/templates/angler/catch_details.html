@@ -32,6 +32,22 @@
                             <label class="block text-sm font-medium text-gray-700">Location</label>
                             <p class="mt-1 text-lg text-gray-900">{{ catch.catch_location }}</p>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Length</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.length }} {{ catch.length_unit }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Weight</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.weight }} {{ catch.weight_unit }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Location</label>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch_location }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Weather Conditions</label>
+                            <p class="mt-1 text-lg text-gray-900 whitespace-pre-wrap">{{ catch.weather_conditions }}</p>
+                        </div>
                     </div>
                     {% else %}
                     <p class="text-red-500">Catch not found or you do not have permission to view this catch.</p>
