@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load leaflet_tags %}
+
+{% block extrahead %}
+    {% leaflet_js plugins="ALL" %}
+    {% leaflet_css plugins="ALL" %}
+{% endblock extrahead %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -18,43 +24,59 @@
                     <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Species</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.fish.official_name }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch.fish.official_name }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Caught By</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.user.full_name }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch.user.full_name }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Caught On</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch_datetime }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch.catch_datetime }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Location</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch_location }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch.catch_location }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Length</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.length }} {{ catch.length_unit }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch.length }} {{ catch.catch.length_unit }}</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Weight</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.weight }} {{ catch.weight_unit }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch.weight }} {{ catch.catch.weight_unit }}</p>
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Location</label>
-                            <p class="mt-1 text-lg text-gray-900">{{ catch.catch_location }}</p>
+                            <p class="mt-1 text-lg text-gray-900">{{ catch.location.latitude }}, {{ catch.location.longitude }}</p>
+                            {{ catch.catch.catch_location|json_script:"catch-marker-data" }}
+                            <div>
+                                {% leaflet_map "catchmap" %}
+                            </div>
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Weather Conditions</label>
-                            <p class="mt-1 text-lg text-gray-900 whitespace-pre-wrap">{{ catch.weather_conditions }}</p>
+                            <p class="mt-1 text-lg text-gray-900 whitespace-pre-wrap">{{ catch.catch.weather_conditions }}</p>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-red-500">Catch not found or you do not have permission to view this catch.</p>
+                    <p class="text-red-500">Catch not found or you do not have permission to view this catch.catch.</p>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    window.addEventListener("map:init", function (e) {
+        if (e.detail.map && e.detail.id === "catchmap") {
+            const markerData = JSON.parse(document.getElementById('catch-marker-data').textContent);
+            if (markerData) {
+                const [latitude, longitude] = markerData.split(',').map(Number);
+                const marker = L.marker([latitude, longitude]).addTo(e.detail.map);
+                e.detail.map.setView([latitude, longitude], 15);
+            }
+        }
+    }, false);
+</script>
 {% endblock %}
